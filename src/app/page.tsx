@@ -10,7 +10,7 @@ export default function HomePage() {
   const router = useRouter();
 
   const handleRedirectToSignIn = () => {
-    router.push("/api/auth/signin", {
+    router.push("/signin", {
       
     });
   };
