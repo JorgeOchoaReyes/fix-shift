@@ -1,6 +1,6 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+import type { Provider } from "next-auth/providers";
 import GoogleProvider from "next-auth/providers/google";
 
 import { db } from "~/server/db";
@@ -37,19 +37,13 @@ declare module "next-auth" {
  *
  * @see https://next-auth.js.org/configuration/options
  */
+
+const providers: Provider[] = [
+  GoogleProvider, 
+];
+
 export const authConfig = {
-  providers: [ 
-    GoogleProvider,
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
-  ],
+  providers:  providers,
   adapter: DrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,
@@ -65,4 +59,17 @@ export const authConfig = {
       },
     }),
   },
-} satisfies NextAuthConfig;
+} satisfies NextAuthConfig; 
+
+export const providerMap = providers
+  .map((provider) => {
+    if (typeof provider === "function") {
+      const providerData = provider({});
+      return { id: providerData.id, name: providerData.name };
+    } else {
+      return { id: (provider as { id: string; name: string }).id, name: (provider as { id: string; name: string }).name };
+    }
+  })
+  .filter((provider) => provider.id !== "credentials");
+
+  
