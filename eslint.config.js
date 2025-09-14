@@ -45,7 +45,10 @@ export default tseslint.config(
       "drizzle/enforce-update-with-where": [
         "error",
         { drizzleObjectName: ["db", "ctx.db"] },
-      ],
+      ], 
+      "indent": ["error", 2],
+      "quotes": [2, "double"],
+      "semi": [2, "always"]
     },
   },
   {
