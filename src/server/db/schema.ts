@@ -1,6 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import { index, pgTableCreator, primaryKey } from "drizzle-orm/pg-core";
-import { type AdapterAccount } from "next-auth/adapters";
+import { type AdapterAccount } from "next-auth/adapters"; 
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -9,27 +9,6 @@ import { type AdapterAccount } from "next-auth/adapters";
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 export const createTable = pgTableCreator((name) => `am_${name}`);
-
-export const posts = createTable(
-  "post",
-  (d) => ({
-    id: d.integer().primaryKey().generatedByDefaultAsIdentity(),
-    name: d.varchar({ length: 256 }),
-    createdById: d
-      .varchar({ length: 255 })
-      .notNull()
-      .references(() => users.id),
-    createdAt: d
-      .timestamp({ withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: d.timestamp({ withTimezone: true }).$onUpdate(() => new Date()),
-  }),
-  (t) => [
-    index("created_by_idx").on(t.createdById),
-    index("name_idx").on(t.name),
-  ],
-);
 
 export const users = createTable("user", (d) => ({
   id: d
@@ -106,3 +85,67 @@ export const verificationTokens = createTable(
   }),
   (t) => [primaryKey({ columns: [t.identifier, t.token] })],
 );
+
+export const employees = createTable("employee", (d) => ({
+  id: d
+    .varchar({ length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: d.varchar({ length: 255 }).notNull(),
+  position: d.varchar({ length: 255 }).notNull(),
+  department: d.varchar({ length: 255 }).notNull(),
+  hireDate: d.date().notNull(),
+  salary: d.integer().notNull(),
+  wage: d.integer().notNull(),
+}));
+
+export type Employee = typeof employees.$inferSelect;
+
+export const schedules = createTable("schedule", (d) => ({
+  id: d
+    .varchar({ length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  startTime: d.timestamp({ mode: "date", withTimezone: true }).notNull(),
+  endTime: d.timestamp({ mode: "date", withTimezone: true }).notNull(), 
+  createdAt: d
+    .timestamp({ mode: "date", withTimezone: true })
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: d
+    .timestamp({ mode: "date", withTimezone: true })
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+}));
+
+export const shifts = createTable("shift", (d) => ({
+  id: d
+    .varchar({ length: 255 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  employeeId: d
+    .varchar({ length: 255 })
+    .notNull()
+    .references(() => employees.id),
+  scheduleId: d
+    .varchar({ length: 255 })
+    .notNull()
+    .references(() => schedules.id),
+  role: d.varchar({ length: 255 }).notNull(),
+  startTime: d.timestamp({ mode: "date", withTimezone: true }).notNull(),
+  endTime: d.timestamp({ mode: "date", withTimezone: true }).notNull(),
+  breakRequired: d.boolean().notNull().default(false),
+}));
+
+export const shiftsRelations = relations(shifts, ({ one }) => ({
+  employee: one(employees, { fields: [shifts.employeeId], references: [employees.id] }),
+  schedule: one(schedules, { fields: [shifts.scheduleId], references: [schedules.id] }),
+}));
+
+export const schedulesRelations = relations(schedules, ({ many }) => ({
+  shifts: many(shifts),
+}));
+
