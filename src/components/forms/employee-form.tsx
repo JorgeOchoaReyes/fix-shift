@@ -6,8 +6,9 @@ import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, } from "~/components/ui/card";
 import type { Employee } from "~/server/db/schema";
+import { Loader } from "lucide-react";
 
 export type CreateEmployeeData = Omit<Employee, "id">;
 
@@ -15,15 +16,15 @@ interface EmployeeFormProps {
   employee?: Employee
   onSubmit: (data: CreateEmployeeData) => void
   onCancel: () => void
+  loading?: boolean
 }
 
-export function EmployeeForm({ employee, onSubmit, onCancel }: EmployeeFormProps) {
+export function EmployeeForm({ employee, onSubmit, onCancel, loading }: EmployeeFormProps) {
   const [formData, setFormData] = useState<CreateEmployeeData>({
     name: employee?.name ?? "",
     position: employee?.position ?? "",
     department: employee?.department ?? "",
     hireDate: employee?.hireDate ?? "",
-    salary: employee?.salary ?? 0,
     wage: employee?.wage ?? 0,
   });
 
@@ -37,7 +38,7 @@ export function EmployeeForm({ employee, onSubmit, onCancel }: EmployeeFormProps
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto"> 
+    <Card className="w-full max-w-2xl mx-autobg-slate-50 bg-slate-50"> 
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -104,19 +105,6 @@ export function EmployeeForm({ employee, onSubmit, onCancel }: EmployeeFormProps
               <Label htmlFor="salary" className="text-sm font-medium text-foreground">
                 Annual Salary ($)
               </Label>
-              <Input
-                id="salary"
-                type="number"
-                value={formData.salary}
-                onChange={(e) => handleChange("salary", Number.parseInt(e.target.value) || 0)}
-                placeholder="Enter annual salary"
-                required
-                min="0"
-                className="bg-input border-border"
-              />
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="wage" className="text-sm font-medium text-foreground">
                 Hourly Wage ($)
               </Label>
@@ -134,8 +122,10 @@ export function EmployeeForm({ employee, onSubmit, onCancel }: EmployeeFormProps
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button type="submit" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground">
-              {employee ? "Update Employee" : "Add Employee"}
+            <Button
+              type="submit" className="bg-secondary hover:bg-secondary/90 text-secondary-foreground">
+              {(employee && !loading) ? "Update Employee" : "Add Employee"}
+              {(loading && <Loader className="ml-2" />)}
             </Button>
             <Button
               type="button"

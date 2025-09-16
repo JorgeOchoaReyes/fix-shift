@@ -96,7 +96,6 @@ export const employees = createTable("employee", (d) => ({
   position: d.varchar({ length: 255 }).notNull(),
   department: d.varchar({ length: 255 }).notNull(),
   hireDate: d.date().notNull(),
-  salary: d.integer().notNull(),
   wage: d.integer().notNull(),
 }));
 
