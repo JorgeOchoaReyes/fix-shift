@@ -65,7 +65,7 @@ export function EmployeeTable({ employees, onEdit, onDelete, onAdd }: EmployeeTa
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full bg-slate-50">
       <CardHeader className="pb-4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <CardTitle className="text-2xl font-bold text-primary">Employee Management</CardTitle>
@@ -122,13 +122,6 @@ export function EmployeeTable({ employees, onEdit, onDelete, onAdd }: EmployeeTa
                 </th>
                 <th
                   className="text-left py-3 px-4 font-medium text-foreground cursor-pointer hover:bg-muted/50 transition-colors"
-                  onClick={() => handleSort("salary")}
-                >
-                  Salary {sortField === "salary" && (sortDirection === "asc" ? "↑" : "↓")}
-                </th>
-                <th
-                  className="text-left py-3 px-4 font-medium text-foreground cursor-pointer hover:bg-muted/50 transition-colors"
-                  onClick={() => handleSort("wage")}
                 >
                   Hourly Wage {sortField === "wage" && (sortDirection === "asc" ? "↑" : "↓")}
                 </th>
@@ -146,7 +139,6 @@ export function EmployeeTable({ employees, onEdit, onDelete, onAdd }: EmployeeTa
                     </Badge>
                   </td>
                   <td className="py-3 px-4 text-muted-foreground">{formatDate(employee.hireDate)}</td>
-                  <td className="py-3 px-4 font-medium text-foreground">{formatCurrency(employee.salary)}</td>
                   <td className="py-3 px-4 text-card-foreground">{formatCurrency(employee.wage)}/hr</td>
                   <td className="py-3 px-4">
                     <div className="flex gap-2">
