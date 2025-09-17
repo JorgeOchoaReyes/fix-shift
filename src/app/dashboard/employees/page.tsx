@@ -16,6 +16,8 @@ export default function HomePage() {
   
   const listEmployees = api.employee.list.useQuery();
   const createEmployee = api.employee.create.useMutation();
+  const updateEmployee = api.employee.update.useMutation();
+  const deleteEmployee = api.employee.delete.useMutation();
 
   useEffect(() => {
     if (listEmployees.data) {
@@ -33,17 +35,18 @@ export default function HomePage() {
     setShowModal(false);
   };
 
-  const handleEditEmployee = (data: CreateEmployeeData) => {
+  const handleEditEmployee = async (data: CreateEmployeeData) => {
     if (!editingEmployee) return;
-
+    await updateEmployee.mutateAsync({ id: editingEmployee.id, ...data });
     setEmployees((prev) => prev.map((emp) => (emp.id === editingEmployee.id ? { ...emp, ...data } : emp)));
     setEditingEmployee(null);
     setShowModal(false);
   };
 
-  const handleDeleteEmployee = (id: string) => {
+  const handleDeleteEmployee = async (id: string) => {
     if (confirm("Are you sure you want to delete this employee?")) {
       setEmployees((prev) => prev.filter((emp) => emp.id !== id));
+      await deleteEmployee.mutateAsync({ id });
     }
   };
 
@@ -65,7 +68,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        <EmployeeTable employees={employees} onEdit={handleEdit} onDelete={handleDeleteEmployee} onAdd={handleAdd} />
+        <EmployeeTable loading={listEmployees.isLoading} employees={employees} onEdit={handleEdit} onDelete={handleDeleteEmployee} onAdd={handleAdd} />
         <Dialog open={showModal} onOpenChange={setShowModal}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>

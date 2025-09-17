@@ -6,16 +6,17 @@ import { Input } from "~/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Badge } from "~/components/ui/badge";
 import type { Employee } from "~/server/db/schema";
-import { Pencil, Trash2, Search, Plus } from "lucide-react";
+import { Pencil, Trash2, Search, Plus, Loader2 } from "lucide-react";
 
 interface EmployeeTableProps {
   employees: Employee[]
   onEdit: (employee: Employee) => void
   onDelete: (id: string) => void
   onAdd: () => void
+  loading?: boolean
 }
 
-export function EmployeeTable({ employees, onEdit, onDelete, onAdd }: EmployeeTableProps) {
+export function EmployeeTable({ employees, onEdit, onDelete, onAdd, loading }: EmployeeTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState<keyof Employee>("name");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -165,11 +166,13 @@ export function EmployeeTable({ employees, onEdit, onDelete, onAdd }: EmployeeTa
             </tbody>
           </table>
 
-          {sortedEmployees.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              {searchTerm ? "No employees found matching your search." : "No employees found."}
-            </div>
-          )}
+          {
+            loading ? <Loader2 className="animate-spin mx-auto mt-8 text-muted-foreground" /> :
+              sortedEmployees.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  {searchTerm ? "No employees found matching your search." : "No employees found."}
+                </div>
+              )}
         </div>
       </CardContent>
     </Card>
