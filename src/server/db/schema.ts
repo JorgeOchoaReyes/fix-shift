@@ -107,8 +107,8 @@ export const schedules = createTable("schedule", (d) => ({
     .notNull()
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  startTime: d.timestamp({ mode: "date", withTimezone: true }).notNull(),
-  endTime: d.timestamp({ mode: "date", withTimezone: true }).notNull(), 
+  startTime: d.bigint({mode: "bigint"}).notNull(),
+  endTime: d.bigint({mode: "bigint"}).notNull(), 
   createdAt: d
     .timestamp({ mode: "date", withTimezone: true })
     .notNull()
@@ -117,7 +117,10 @@ export const schedules = createTable("schedule", (d) => ({
     .timestamp({ mode: "date", withTimezone: true })
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
+  published: d.boolean().notNull().default(false),
 }));
+
+export type Schedule = typeof schedules.$inferSelect;
 
 export const shifts = createTable("shift", (d) => ({
   id: d
