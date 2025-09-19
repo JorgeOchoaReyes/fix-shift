@@ -8,6 +8,13 @@
       "when": 1758009389879,
       "tag": "0000_naive_deathbird",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1758266405943,
+      "tag": "0001_curvy_jamie_braddock",
+      "breakpoints": true
     }
   ]
 }
