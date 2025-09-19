@@ -1,11 +1,7 @@
 import React from "react";
-import { useSearchParams } from "next/navigation";
 
 export default function SchedulePage() {
-  const searchParams = useSearchParams();
-  const scheduleId = searchParams.get("id");
 
-  
 
   return (
     <div className="min-h-screen p-4 md:p-8">
